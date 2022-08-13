@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="DeviceServer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/DeviceServer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
