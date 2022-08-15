@@ -20,7 +20,7 @@ public class RailroadAPIImpl implements RailroadAPI, DeviceServerListener
 	{
 		deviceServer = new DeviceServerImpl(SERVER_PORT,
 								1024,
-									10,
+									1024,
 								1000,
 										this);
 	}
@@ -31,6 +31,8 @@ public class RailroadAPIImpl implements RailroadAPI, DeviceServerListener
 		Device device = deviceServer.createDevice(deviceId, "LEGO_Locomotive", 1);
 		LocomotiveImpl locomotive = new LocomotiveImpl(name, device);
 		device.setPacketHandler(locomotive);
+		device.addConnectionListener(locomotive);
+		deviceServer.addDevice(device);
 		return locomotive;
 	}
 
@@ -41,6 +43,8 @@ public class RailroadAPIImpl implements RailroadAPI, DeviceServerListener
 		Device device = deviceServer.createDevice(deviceId, deviceType, 1);
 		SwitchImpl railSwitch = new SwitchImpl(name, type, device);
 		device.setPacketHandler(railSwitch);
+		device.addConnectionListener(railSwitch);
+		deviceServer.addDevice(device);
 		return railSwitch;
 	}
 
@@ -53,7 +57,9 @@ public class RailroadAPIImpl implements RailroadAPI, DeviceServerListener
 	@Override
 	public void waitForAllDevicesToConnect() throws InterruptedException
 	{
+		System.out.println("Waiting for devices to connect...");
 		deviceServer.waitForAllDevicesToConnect();
+		System.out.println("All is connected!");
 	}
 
 	@Override
@@ -72,12 +78,12 @@ public class RailroadAPIImpl implements RailroadAPI, DeviceServerListener
 	@Override
 	public void onDeviceAdded(Device device)
 	{
-
+		System.out.println("Device added: " + device);
 	}
 
 	@Override
 	public void onDeviceRemoved(Device device)
 	{
-
+		System.out.println("Device removed: " + device);
 	}
 }

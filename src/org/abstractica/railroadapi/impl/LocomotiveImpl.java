@@ -1,6 +1,7 @@
 package org.abstractica.railroadapi.impl;
 
 import org.abstractica.deviceserver.Device;
+import org.abstractica.deviceserver.DeviceConnectionListener;
 import org.abstractica.deviceserver.DevicePacketHandler;
 import org.abstractica.deviceserver.Response;
 import org.abstractica.railroadapi.Locomotive;
@@ -8,7 +9,7 @@ import org.abstractica.railroadapi.Locomotive;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class LocomotiveImpl implements Locomotive, DevicePacketHandler
+public class LocomotiveImpl implements Locomotive, DevicePacketHandler, DeviceConnectionListener
 {
 	//Commands for locomotives
 	private final static int COMMAND_IDENTIFY = 1000;
@@ -35,6 +36,14 @@ public class LocomotiveImpl implements Locomotive, DevicePacketHandler
 	}
 
 	private Collection<DistanceToGoalListener> listeners;
+
+	@Override
+	public boolean identify(int numberOfBlinks) throws InterruptedException
+	{
+		Response response = device.sendPacket(COMMAND_IDENTIFY, numberOfBlinks, 0, null, true, false);
+		if (response == null) return false;
+		return response.getResponse() == 0;
+	}
 
 	@Override
 	public String getName()
@@ -148,6 +157,36 @@ public class LocomotiveImpl implements Locomotive, DevicePacketHandler
 			}
 		}
 		listeners.removeAll(doomed);
+	}
+
+	@Override
+	public void onCreated()
+	{
+		System.out.println(name + " created!");
+	}
+
+	@Override
+	public void onConnected()
+	{
+		System.out.println(name + " connected!");
+	}
+
+	@Override
+	public void onDisconnected()
+	{
+		System.out.println(name + " disconnected!");
+	}
+
+	@Override
+	public void onLost()
+	{
+		System.out.println(name + " lost!");
+	}
+
+	@Override
+	public void onDestroyed()
+	{
+		System.out.println(name + " destroyed!");
 	}
 
 	private class DistanceToGoalListener
